@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broadsheet — preview</title>
+<style>
+/* ---- shared design tokens (mirror of theme.css) ---- */
+.paper {
+  --font-text-theme: "Newsreader", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --bs-font-headline: "Playfair Display", "Newsreader", Georgia, serif;
+  --bs-font-label: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-monospace-theme: "JetBrains Mono", "SFMono-Regular", ui-monospace, "Cascadia Code", monospace;
+  --bs-rule: 1px; --bs-rule-bold: 3px;
+}
+.theme-light {
+  --bs-paper:#f7f6f1; --bs-paper-2:#f1efe8; --bs-paper-3:#eae8df;
+  --bs-ink:#16150f; --bs-ink-soft:#45433b; --bs-ink-faint:#8c897d;
+  --bs-rule-color:#1b1a14; --bs-rule-soft:#d8d5c9;
+  --bs-accent:#1b3fe6; --bs-accent-hover:#1230c9; --bs-accent-text:#1531c4;
+  --text-on-accent:#fffefb; --highlight:rgba(245,215,25,.5);
+}
+.theme-dark {
+  --bs-paper:#131217; --bs-paper-2:#0e0d12; --bs-paper-3:#1b1a21;
+  --bs-ink:#eae8df; --bs-ink-soft:#a6a294; --bs-ink-faint:#6b6859;
+  --bs-rule-color:#e7e4d8; --bs-rule-soft:#2b2a33;
+  --bs-accent:#5470ff; --bs-accent-hover:#6e86ff; --bs-accent-text:#93a6ff;
+  --text-on-accent:#0b0b0d; --highlight:rgba(245,215,25,.32);
+}
+
+/* ---- page chrome ---- */
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 32px; gap: 32px;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  background: #2a2a2e; font-family: "Inter", sans-serif;
+}
+.stage { flex: 1 1 660px; max-width: 720px; }
+.stage-label {
+  font-family: "Inter", sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: #b8b6ae;
+  margin: 0 0 10px 4px;
+}
+.paper {
+  background: var(--bs-paper); color: var(--bs-ink);
+  font-family: var(--font-text-theme); font-size: 18px; line-height: 1.62;
+  padding: 48px 56px 56px; border-radius: 6px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "onum" 1, "liga" 1, "kern" 1;
+}
+
+/* ---- masthead ---- */
+.inline-title {
+  font-family: var(--bs-font-headline); font-weight: 900; font-size: 2.9em;
+  line-height: 1.04; letter-spacing: -.02em; text-align: center;
+  margin: 0 0 .5em; padding-bottom: .32em;
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+  box-shadow: 0 6px 0 -4px var(--bs-rule-color);
+}
+.inline-title::before {
+  content: ""; display: block; width: 100%;
+  border-top: var(--bs-rule) solid var(--bs-rule-color); margin-bottom: .45em;
+}
+.byline {
+  font-family: var(--bs-font-label); text-transform: uppercase;
+  letter-spacing: .14em; font-size: .72em; color: var(--bs-ink-soft);
+  text-align: center; margin: -.2em 0 2em;
+}
+.byline .accent { color: var(--bs-accent-text); }
+
+/* ---- headings ---- */
+h1 { font-family: var(--bs-font-headline); font-weight: 800; font-size: 2.55em;
+  line-height: 1.08; letter-spacing: -.012em; padding-bottom: .22em;
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+  box-shadow: 0 5px 0 -3.5px var(--bs-rule-color); }
+h2 { font-family: var(--bs-font-headline); font-weight: 700; font-size: 1.85em;
+  line-height: 1.12; letter-spacing: -.012em; padding-bottom: .14em;
+  border-bottom: var(--bs-rule) solid var(--bs-rule-color); margin-top: 1.4em; }
+h3 { font-family: var(--bs-font-headline); font-weight: 700; font-size: 1.4em; }
+h4 { font-family: var(--bs-font-label); text-transform: uppercase;
+  letter-spacing: .14em; font-weight: 700; font-size: 1em;
+  color: var(--bs-accent-text); margin-top: 1.6em; }
+
+/* ---- body bits ---- */
+p { margin: 0 0 1em; }
+.lead > p:first-of-type::first-letter {
+  font-family: var(--bs-font-headline); font-weight: 800; float: left;
+  font-size: 3.4em; line-height: .72; padding: .04em .09em 0 0;
+}
+a { color: var(--bs-accent-text); text-decoration: underline;
+  text-decoration-thickness: 1px; text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--bs-accent) 45%, transparent); }
+strong { font-weight: 700; }
+mark { background: var(--highlight); color: var(--bs-ink); padding: 0 .1em; }
+
+blockquote {
+  font-family: var(--bs-font-headline); font-style: italic; font-size: 1.18em;
+  line-height: 1.4; border-left: var(--bs-rule-bold) solid var(--bs-accent);
+  padding: .1em 0 .1em 1.1em; margin: 1.2em 0; }
+
+hr { border: none; height: var(--bs-rule); background: var(--bs-rule-color);
+  margin: 2.2em 0; position: relative; overflow: visible; }
+hr::after { content: "§"; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); background: var(--bs-paper); padding: 0 .5em;
+  font-family: var(--bs-font-headline); color: var(--bs-accent-text); }
+
+ul, ol { padding-left: 1.3em; }
+li { margin: .2em 0; }
+ul li::marker { color: var(--bs-accent); }
+
+/* ---- tags ---- */
+.tag { font-family: var(--bs-font-label); text-transform: uppercase;
+  letter-spacing: .08em; font-size: .7em; font-weight: 600;
+  color: var(--bs-accent-text); background: color-mix(in srgb, var(--bs-accent) 10%, transparent);
+  border: var(--bs-rule) solid color-mix(in srgb, var(--bs-accent) 35%, transparent);
+  border-radius: 2px; padding: .12em .5em; text-decoration: none;
+  white-space: nowrap; }
+
+/* ---- table ---- */
+table { border-collapse: collapse; font-size: .92em; width: 100%; margin: 1.2em 0;
+  border-top: var(--bs-rule-bold) solid var(--bs-rule-color);
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color); }
+thead { border-bottom: var(--bs-rule) solid var(--bs-rule-color); }
+th { font-family: var(--bs-font-label); text-transform: uppercase;
+  letter-spacing: .08em; font-size: .82em; font-weight: 700;
+  color: var(--bs-ink-soft); text-align: left; }
+td, th { padding: .4em .8em; border-bottom: var(--bs-rule) solid var(--bs-rule-soft); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ---- code ---- */
+code { font-family: var(--font-monospace-theme); font-size: .86em;
+  background: var(--bs-paper-3); border: var(--bs-rule) solid var(--bs-rule-soft);
+  border-radius: 3px; padding: .1em .36em; }
+pre { background: var(--bs-paper-3); border: var(--bs-rule) solid var(--bs-rule-soft);
+  border-left: var(--bs-rule-bold) solid var(--bs-rule-color);
+  border-radius: 0 4px 4px 0; padding: 14px 16px; overflow:auto; font-size: .82em; }
+pre code { border: none; background: none; padding: 0; }
+
+/* ---- callout ---- */
+.callout { border: var(--bs-rule) solid var(--bs-rule-color);
+  border-left: var(--bs-rule-bold) solid var(--bs-accent);
+  border-radius: 0 4px 4px 0; background: var(--bs-paper-2);
+  padding: 14px 18px; margin: 1.2em 0; }
+.callout-title { font-family: var(--bs-font-label); text-transform: uppercase;
+  letter-spacing: .1em; font-size: .82em; font-weight: 700; margin-bottom: .4em;
+  display: flex; align-items: center; gap: .5em; }
+.callout-title .dot { width: .6em; height: .6em; background: var(--bs-accent);
+  border-radius: 50%; }
+.callout p { margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- ===================== DAY (light) ===================== -->
+<div class="stage">
+  <p class="stage-label">Day · light</p>
+  <article class="paper theme-light">
+    <div class="inline-title">The Vault Times</div>
+    <p class="byline">Vol. I &nbsp;·&nbsp; <span class="accent">Broadsheet Edition</span> &nbsp;·&nbsp; Monday, June 1</p>
+
+    <div class="lead">
+      <p>Obsidian has never read quite like newsprint before. <strong>Broadsheet</strong> sets your notes in a high-contrast editorial type system — a Didone headline face over a screen-tuned serif — and lets a single <a href="#">electric accent</a> punch through the black and white.</p>
+    </div>
+
+    <p>The result is a workspace that feels like the front page of a well-made paper, yet keeps the modern spacing and color you expect from a contemporary app. Links, markers and kickers all carry the accent so the eye always knows where to travel next.</p>
+
+    <h2>Setting the Headline</h2>
+    <p>Section heads sit beneath crisp rules. Smaller heads become <mark>small-caps kickers</mark> that label a passage the way a newspaper labels its columns.</p>
+
+    <h4>Field Notes</h4>
+    <ul>
+      <li>Drop cap opens the first paragraph</li>
+      <li>Pull-quotes lean into the accent rule</li>
+      <li>Tables are ruled like a stats box</li>
+    </ul>
+
+    <blockquote>“The detail that makes it feel like print is the rule — a hairline of ink that organizes everything below it.”</blockquote>
+
+    <table>
+      <thead><tr><th>Element</th><th>Face</th><th>Treatment</th></tr></thead>
+      <tbody>
+        <tr><td>Masthead</td><td>Playfair</td><td>Double rule</td></tr>
+        <tr><td>Body</td><td>Newsreader</td><td>Old-style figures</td></tr>
+        <tr><td>Kicker</td><td>Inter</td><td>Small caps</td></tr>
+      </tbody>
+    </table>
+
+    <p>Inline <code>code</code> and blocks stay legible and quiet:</p>
+    <pre><code>theme-light {
+  --bs-accent: #1b3fe6; /* cobalt */
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title"><span class="dot"></span>Editor's Note</div>
+      <p>Callouts read as boxed editorial asides, framed in ink with an accent spine.</p>
+    </div>
+
+    <p style="margin-top:1.2em">
+      <a class="tag" href="#">#design</a>
+      <a class="tag" href="#">#typography</a>
+      <a class="tag" href="#">#obsidian</a>
+    </p>
+
+    <hr>
+    <p style="text-align:center; font-family:var(--bs-font-label); font-size:.72em; letter-spacing:.14em; text-transform:uppercase; color:var(--bs-ink-faint); margin:0;">— end of column —</p>
+  </article>
+</div>
+
+<!-- ===================== NIGHT PRINT (dark) ===================== -->
+<div class="stage">
+  <p class="stage-label">Night Print · dark</p>
+  <article class="paper theme-dark">
+    <div class="inline-title">The Vault Times</div>
+    <p class="byline">Vol. I &nbsp;·&nbsp; <span class="accent">Broadsheet Edition</span> &nbsp;·&nbsp; Monday, June 1</p>
+
+    <div class="lead">
+      <p>Obsidian has never read quite like newsprint before. <strong>Broadsheet</strong> sets your notes in a high-contrast editorial type system — a Didone headline face over a screen-tuned serif — and lets a single <a href="#">electric accent</a> punch through the black and white.</p>
+    </div>
+
+    <p>At night the paper inverts to inky stock and warm off-white ink, while the accent brightens just enough to keep its pop. Same layout, same rules — a late edition of the same paper.</p>
+
+    <h2>Setting the Headline</h2>
+    <p>Section heads sit beneath crisp rules. Smaller heads become <mark>small-caps kickers</mark> that label a passage the way a newspaper labels its columns.</p>
+
+    <h4>Field Notes</h4>
+    <ul>
+      <li>Drop cap opens the first paragraph</li>
+      <li>Pull-quotes lean into the accent rule</li>
+      <li>Tables are ruled like a stats box</li>
+    </ul>
+
+    <blockquote>“The detail that makes it feel like print is the rule — a hairline of ink that organizes everything below it.”</blockquote>
+
+    <table>
+      <thead><tr><th>Element</th><th>Face</th><th>Treatment</th></tr></thead>
+      <tbody>
+        <tr><td>Masthead</td><td>Playfair</td><td>Double rule</td></tr>
+        <tr><td>Body</td><td>Newsreader</td><td>Old-style figures</td></tr>
+        <tr><td>Kicker</td><td>Inter</td><td>Small caps</td></tr>
+      </tbody>
+    </table>
+
+    <p>Inline <code>code</code> and blocks stay legible and quiet:</p>
+    <pre><code>theme-dark {
+  --bs-accent: #5470ff; /* cobalt */
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title"><span class="dot"></span>Editor's Note</div>
+      <p>Callouts read as boxed editorial asides, framed in ink with an accent spine.</p>
+    </div>
+
+    <p style="margin-top:1.2em">
+      <a class="tag" href="#">#design</a>
+      <a class="tag" href="#">#typography</a>
+      <a class="tag" href="#">#obsidian</a>
+    </p>
+
+    <hr>
+    <p style="text-align:center; font-family:var(--bs-font-label); font-size:.72em; letter-spacing:.14em; text-transform:uppercase; color:var(--bs-ink-faint); margin:0;">— end of column —</p>
+  </article>
+</div>
+
+</body>
+</html>

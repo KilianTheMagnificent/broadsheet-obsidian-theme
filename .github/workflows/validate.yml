@@ -1,0 +1,102 @@
+name: Validate Broadsheet Theme
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Obsidian theme manifest, CSS, and submission metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import re
+          import struct
+          import sys
+
+          root = pathlib.Path(".")
+
+          # 1. Validate manifest.json
+          manifest_path = root / "manifest.json"
+          assert manifest_path.is_file(), "manifest.json is missing"
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+          required_fields = ("name", "version", "minAppVersion", "author", "authorUrl")
+          for field in required_fields:
+              val = manifest.get(field)
+              assert isinstance(val, str) and val.strip(), f"manifest.json missing non-empty '{field}'"
+
+          semver = re.compile(r"^\d+\.\d+\.\d+$")
+          assert semver.match(manifest["version"]), f"version '{manifest['version']}' must match x.y.z"
+          assert semver.match(manifest["minAppVersion"]), f"minAppVersion '{manifest['minAppVersion']}' must match x.y.z"
+          assert manifest["authorUrl"].startswith("https://"), "authorUrl must use https://"
+          assert "obsidian" not in manifest["name"].lower(), "Theme name must not contain 'Obsidian'"
+          assert "theme" not in manifest["name"].lower(), "Theme name must not contain 'Theme'"
+
+          # 2. Validate theme.css
+          css_path = root / "theme.css"
+          assert css_path.is_file(), "theme.css is missing"
+          css = css_path.read_text(encoding="utf-8")
+          assert len(css.strip()) > 0, "theme.css is empty"
+          assert ".theme-light" in css, "theme.css must define .theme-light styles"
+          assert ".theme-dark" in css, "theme.css must define .theme-dark styles"
+          assert "fonts.googleapis.com" not in css, "theme.css must not load Google Fonts externally"
+          assert not re.search(r"@import\s+url\(['\"]?https?://", css, re.IGNORECASE), (
+              "theme.css must not contain external @import URLs"
+          )
+
+          # Strip CSS comments and quoted strings, then verify balanced braces
+          stripped = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+          stripped = re.sub(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'', "", stripped)
+          depth = 0
+          for ch in stripped:
+              if ch == "{":
+                  depth += 1
+              elif ch == "}":
+                  depth -= 1
+                  assert depth >= 0, "Unmatched closing brace in theme.css"
+          assert depth == 0, f"Unclosed brace(s) in theme.css (depth={depth})"
+
+          # 3. Validate required repository and legal files
+          for rel in (
+              "README.md",
+              "LICENSE",
+              "THIRD_PARTY_NOTICES.md",
+              "CONTRIBUTING.md",
+              "SECURITY.md",
+              "docs/obsidian-community-submission.md",
+          ):
+              assert (root / rel).is_file(), f"Required file missing: {rel}"
+
+          # 4. Validate embedded community-css-themes.json entry & PNG screenshot
+          sub_doc = (root / "docs/obsidian-community-submission.md").read_text(encoding="utf-8")
+          match = re.search(r"```json\s*(\{.*?\})\s*```", sub_doc, flags=re.DOTALL)
+          assert match, "No JSON block found in docs/obsidian-community-submission.md"
+          entry = json.loads(match.group(1))
+
+          assert entry["name"] == manifest["name"], "Submission JSON name does not match manifest.json"
+          assert entry["author"] == manifest["author"], "Submission JSON author does not match manifest.json"
+          assert re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", entry["repo"]), "Invalid repo format"
+          assert set(entry["modes"]) == {"dark", "light"}, "Submission JSON modes must include dark and light"
+
+          shot_path = root / entry["screenshot"]
+          assert shot_path.is_file(), f"Screenshot missing: {entry['screenshot']}"
+          raw = shot_path.read_bytes()
+          assert raw[:8] == b"\x89PNG\r\n\x1a\n", f"{entry['screenshot']} is not a valid PNG"
+          width, height = struct.unpack(">II", raw[16:24])
+          assert (width, height) == (512, 288), (
+              f"Store screenshot should be 512x288, got {width}x{height}"
+          )
+
+          print("OK: manifest.json, theme.css, legal/docs files, and community submission metadata are valid.")
+          PY

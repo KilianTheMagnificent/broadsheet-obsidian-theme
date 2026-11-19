@@ -1,0 +1,803 @@
+/* ==========================================================================
+   BROADSHEET  —  a modern newspaper theme for Obsidian
+   High-contrast newsprint typography + one electric accent ("Mono Pop").
+   Supports light ("Day") and dark ("Night Print") modes.
+   Author: Andre Romero
+   License: MIT
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Style Settings plugin schema (optional — works without it too).
+   Install the "Style Settings" community plugin to toggle these in the UI.
+   -------------------------------------------------------------------------- */
+/* @settings
+
+name: Broadsheet
+id: broadsheet-theme
+settings:
+    -
+        id: bs-type-heading
+        title: Typography
+        type: heading
+        level: 2
+        collapsed: true
+    -
+        id: font-text-size
+        title: Body font size
+        description: Base reading size in pixels.
+        type: variable-number-slider
+        default: 18
+        min: 14
+        max: 24
+        step: 1
+        format: px
+    -
+        id: bs-line-width
+        title: Column width
+        description: Readable line length (the newspaper "measure").
+        type: variable-number-slider
+        default: 40
+        min: 28
+        max: 62
+        step: 1
+        format: rem
+    -
+        id: bs-font-headline
+        title: Headline font
+        type: variable-select
+        default: '"Playfair Display", "Newsreader", Georgia, serif'
+        options:
+            -
+                label: Playfair Display (Didone)
+                value: '"Playfair Display", "Newsreader", Georgia, serif'
+            -
+                label: Newsreader
+                value: '"Newsreader", Georgia, serif'
+            -
+                label: System serif
+                value: 'Georgia, "Times New Roman", serif'
+    -
+        id: bs-color-heading
+        title: Color & accent
+        type: heading
+        level: 2
+        collapsed: true
+    -
+        id: bs-accent-select
+        title: Accent ("the pop")
+        description: The single electric color that punches through the black & white.
+        type: class-select
+        allowEmpty: false
+        default: bs-cobalt
+        options:
+            -
+                label: Cobalt
+                value: bs-cobalt
+            -
+                label: Magenta
+                value: bs-magenta
+            -
+                label: Tangerine
+                value: bs-tangerine
+            -
+                label: Ink (monochrome)
+                value: bs-ink
+    -
+        id: bs-feat-heading
+        title: Newspaper features
+        type: heading
+        level: 2
+        collapsed: true
+    -
+        id: bs-no-dropcaps
+        title: Disable drop caps
+        description: Turn off the large initial letter on the first paragraph (reading view).
+        type: class-toggle
+        default: false
+    -
+        id: bs-no-masthead
+        title: Disable masthead rules
+        description: Turn off the double rules under the note title and H1.
+        type: class-toggle
+        default: false
+    -
+        id: bs-justify
+        title: Justified body text
+        description: Justify paragraphs with automatic hyphenation, like print.
+        type: class-toggle
+        default: false
+    -
+        id: bs-no-smallcaps
+        title: Disable small-caps labels
+        description: Turn off uppercase letter-spaced labels on H4–H6, tags and metadata.
+        type: class-toggle
+        default: false
+*/
+
+/* --------------------------------------------------------------------------
+   Fonts — local/system font stacks only (offline-safe, zero external requests).
+   Uses installed editorial faces when present on the machine and degrades
+   cleanly to system serif/sans/mono stacks.
+   -------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+
+body {
+  /* Font stacks --------------------------------------------------------- */
+  --font-text-theme: "Newsreader", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-interface-theme: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-monospace-theme: "JetBrains Mono", "SFMono-Regular", ui-monospace, "Cascadia Code", monospace;
+  --bs-font-headline: "Playfair Display", "Newsreader", Georgia, serif;
+  --bs-font-label: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Sizing -------------------------------------------------------------- */
+  --font-text-size: 18px;
+  --bs-line-width: 40rem;
+  --file-line-width: var(--bs-line-width);
+  --line-height-normal: 1.62;
+  --line-height-tight: 1.3;
+
+  /* Headings ------------------------------------------------------------ */
+  --h1-font: var(--bs-font-headline);
+  --h2-font: var(--bs-font-headline);
+  --h3-font: var(--bs-font-headline);
+  --h4-font: var(--bs-font-label);
+  --h5-font: var(--bs-font-label);
+  --h6-font: var(--bs-font-label);
+  --h1-size: 2.55em;
+  --h2-size: 1.85em;
+  --h3-size: 1.4em;
+  --h4-size: 1em;
+  --h5-size: 0.84em;
+  --h6-size: 0.78em;
+  --h1-weight: 800;
+  --h2-weight: 700;
+  --h3-weight: 700;
+  --h4-weight: 700;
+  --h5-weight: 700;
+  --h6-weight: 700;
+  --h1-line-height: 1.08;
+  --h2-line-height: 1.12;
+  --h3-line-height: 1.2;
+
+  /* Newspaper rules ----------------------------------------------------- */
+  --bs-rule: 1px;
+  --bs-rule-bold: 3px;
+  --radius-s: 3px;
+  --radius-m: 4px;
+  --radius-l: 6px;
+
+  /* Tabs / chrome ------------------------------------------------------- */
+  --tab-radius-active: 0px;
+  --tab-curve: 0px;
+  --titlebar-border-width: var(--bs-rule);
+  --divider-width: var(--bs-rule);
+  --modal-radius: 6px;
+  --prompt-input-height: 44px;
+}
+
+/* Note: themes set the *-theme font vars above; Obsidian falls back to them
+   unless the user picks their own font in Appearance settings. */
+
+/* ==========================================================================
+   2. COLOR  —  LIGHT ("Day")
+   ========================================================================== */
+
+.theme-light {
+  /* Newsprint paper + ink */
+  --bs-paper: #f7f6f1;
+  --bs-paper-2: #f1efe8;
+  --bs-paper-3: #eae8df;
+  --bs-ink: #16150f;
+  --bs-ink-soft: #45433b;
+  --bs-ink-faint: #8c897d;
+  --bs-rule-color: #1b1a14;
+  --bs-rule-soft: #d8d5c9;
+
+  --background-primary: var(--bs-paper);
+  --background-primary-alt: var(--bs-paper-2);
+  --background-secondary: var(--bs-paper-2);
+  --background-secondary-alt: var(--bs-paper-3);
+  --background-modifier-border: var(--bs-rule-soft);
+  --background-modifier-border-hover: #c4c0b2;
+  --background-modifier-border-focus: var(--bs-accent);
+  --background-modifier-hover: rgba(22, 21, 15, 0.05);
+  --background-modifier-active-hover: rgba(22, 21, 15, 0.09);
+  --background-modifier-form-field: #fffefb;
+
+  --text-normal: var(--bs-ink);
+  --text-muted: var(--bs-ink-soft);
+  --text-faint: var(--bs-ink-faint);
+  --text-on-accent: #fffefb;
+  --text-selection: rgba(27, 63, 230, 0.16);
+  --text-highlight-bg: rgba(245, 215, 25, 0.5);
+
+  --interactive-normal: var(--bs-paper-2);
+  --interactive-hover: var(--bs-paper-3);
+
+  --hr-color: var(--bs-rule-color);
+  --blockquote-border-color: var(--bs-ink);
+  --code-background: var(--bs-paper-3);
+  --code-normal: #2c2a22;
+  --titlebar-background: var(--bs-paper-2);
+  --titlebar-background-focused: var(--bs-paper-2);
+
+  /* Default accent = Cobalt (overridden by accent presets below) */
+  --bs-accent: #1b3fe6;
+  --bs-accent-hover: #1230c9;
+  --bs-accent-text: #1531c4;
+  --accent-h: 229;
+  --accent-s: 82%;
+  --accent-l: 50%;
+}
+
+/* ==========================================================================
+   2b. COLOR  —  DARK ("Night Print")
+   ========================================================================== */
+
+.theme-dark {
+  --bs-paper: #131217;
+  --bs-paper-2: #0e0d12;
+  --bs-paper-3: #1b1a21;
+  --bs-ink: #eae8df;
+  --bs-ink-soft: #a6a294;
+  --bs-ink-faint: #6b6859;
+  --bs-rule-color: #e7e4d8;
+  --bs-rule-soft: #2b2a33;
+
+  --background-primary: var(--bs-paper);
+  --background-primary-alt: var(--bs-paper-2);
+  --background-secondary: var(--bs-paper-2);
+  --background-secondary-alt: #0a0910;
+  --background-modifier-border: var(--bs-rule-soft);
+  --background-modifier-border-hover: #3a3947;
+  --background-modifier-border-focus: var(--bs-accent);
+  --background-modifier-hover: rgba(231, 228, 216, 0.06);
+  --background-modifier-active-hover: rgba(231, 228, 216, 0.1);
+  --background-modifier-form-field: #1a1921;
+
+  --text-normal: var(--bs-ink);
+  --text-muted: var(--bs-ink-soft);
+  --text-faint: var(--bs-ink-faint);
+  --text-on-accent: #0b0b0d;
+  --text-selection: rgba(84, 112, 255, 0.28);
+  --text-highlight-bg: rgba(245, 215, 25, 0.32);
+
+  --interactive-normal: var(--bs-paper-3);
+  --interactive-hover: #24232c;
+
+  --hr-color: var(--bs-rule-color);
+  --blockquote-border-color: var(--bs-ink);
+  --code-background: #1c1b23;
+  --code-normal: #d7d3c4;
+  --titlebar-background: var(--bs-paper-2);
+  --titlebar-background-focused: var(--bs-paper-2);
+
+  /* Default accent = Cobalt */
+  --bs-accent: #5470ff;
+  --bs-accent-hover: #6e86ff;
+  --bs-accent-text: #93a6ff;
+  --accent-h: 230;
+  --accent-s: 100%;
+  --accent-l: 72%;
+}
+
+/* ==========================================================================
+   3. ACCENT PRESETS  (Style Settings → "Accent")
+   ========================================================================== */
+
+/* Magenta */
+body.bs-magenta.theme-light { --bs-accent:#e11484; --bs-accent-hover:#c30e70; --bs-accent-text:#bd0a6b; --accent-h:327; --accent-s:84%; --accent-l:48%; }
+body.bs-magenta.theme-dark  { --bs-accent:#ff4d94; --bs-accent-hover:#ff6ba8; --bs-accent-text:#ff80b4; --accent-h:333; --accent-s:100%; --accent-l:65%; }
+
+/* Tangerine */
+body.bs-tangerine.theme-light { --bs-accent:#ef5316; --bs-accent-hover:#d4430c; --bs-accent-text:#bf3d0b; --accent-h:18; --accent-s:88%; --accent-l:51%; }
+body.bs-tangerine.theme-dark  { --bs-accent:#ff7a45; --bs-accent-hover:#ff9163; --bs-accent-text:#ff9b72; --accent-h:18; --accent-s:100%; --accent-l:64%; }
+
+/* Ink (monochrome — let the black & white do the talking) */
+body.bs-ink.theme-light { --bs-accent:#16150f; --bs-accent-hover:#000000; --bs-accent-text:#16150f; --accent-h:48; --accent-s:18%; --accent-l:8%; }
+body.bs-ink.theme-dark  { --bs-accent:#eae8df; --bs-accent-hover:#ffffff; --bs-accent-text:#eae8df; --accent-h:48; --accent-s:18%; --accent-l:90%; --text-on-accent:#0b0b0d; }
+
+/* Route Obsidian's accent machinery through our token */
+body {
+  --interactive-accent: var(--bs-accent);
+  --interactive-accent-hover: var(--bs-accent-hover);
+  --text-accent: var(--bs-accent-text);
+  --text-accent-hover: var(--bs-accent-hover);
+  --link-color: var(--bs-accent-text);
+  --link-color-hover: var(--bs-accent-hover);
+  --link-external-color: var(--bs-accent-text);
+  --link-external-color-hover: var(--bs-accent-hover);
+  --link-unresolved-color: var(--bs-accent-text);
+  --tag-color: var(--bs-accent-text);
+  --checkbox-color: var(--bs-accent);
+  --checkbox-color-hover: var(--bs-accent-hover);
+  --icon-color-active: var(--bs-accent);
+  --nav-item-color-active: var(--text-normal);
+  --collapse-icon-color-collapsed: var(--bs-accent);
+}
+
+/* ==========================================================================
+   4. BODY TYPOGRAPHY
+   ========================================================================== */
+
+.markdown-rendered,
+.markdown-source-view.mod-cm6 .cm-content {
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1, "calt" 1;
+  letter-spacing: 0.003em;
+}
+
+.markdown-rendered p,
+.markdown-source-view .cm-line {
+  hyphens: none;
+}
+
+/* Bold / italic keep ink color, just weight/slant */
+.markdown-rendered strong,
+.cm-strong { font-weight: 700; color: var(--text-normal); }
+.markdown-rendered em,
+.cm-em { font-style: italic; }
+
+/* Links — newspaper underline that thickens on hover, in the accent color */
+.markdown-rendered a.internal-link,
+.markdown-rendered a.external-link,
+.cm-link .cm-underline,
+.cm-hmd-internal-link .cm-underline {
+  color: var(--bs-accent-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--bs-accent) 45%, transparent);
+  transition: text-decoration-color 90ms ease, color 90ms ease;
+}
+.markdown-rendered a:hover {
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--bs-accent);
+}
+
+/* ==========================================================================
+   5. HEADINGS & MASTHEAD
+   ========================================================================== */
+
+.markdown-rendered h1, .HyperMD-header-1,
+.markdown-rendered h2, .HyperMD-header-2,
+.markdown-rendered h3, .HyperMD-header-3 {
+  font-family: var(--bs-font-headline);
+  letter-spacing: -0.012em;
+}
+
+.markdown-rendered h1, .HyperMD-header-1 { line-height: var(--h1-line-height); }
+.markdown-rendered h2, .HyperMD-header-2 { line-height: var(--h2-line-height); }
+
+/* H1 — section head with a bold rule + hairline beneath (double-rule) */
+.markdown-rendered h1 {
+  padding-bottom: 0.22em;
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+  box-shadow: 0 5px 0 -3.5px var(--bs-rule-color);
+}
+
+/* H2 — single rule */
+.markdown-rendered h2 {
+  padding-bottom: 0.14em;
+  border-bottom: var(--bs-rule) solid var(--bs-rule-color);
+}
+
+/* The same H1/H2 rules in Live Preview (edit mode). Broadsheet's newspaper
+   rules otherwise appear only in Reading view; most editing happens here. */
+.markdown-source-view.mod-cm6 .HyperMD-header-1 {
+  padding-bottom: 0.16em;
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+}
+.markdown-source-view.mod-cm6 .HyperMD-header-2 {
+  padding-bottom: 0.08em;
+  border-bottom: var(--bs-rule) solid var(--bs-rule-color);
+}
+
+/* H4–H6 — small-caps "kicker" labels in the sans, tinted with accent on H4 */
+.markdown-rendered h4, .HyperMD-header-4,
+.markdown-rendered h5, .HyperMD-header-5,
+.markdown-rendered h6, .HyperMD-header-6 {
+  font-family: var(--bs-font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+.markdown-rendered h4, .HyperMD-header-4 { color: var(--bs-accent-text); }
+.markdown-rendered h5, .HyperMD-header-5,
+.markdown-rendered h6, .HyperMD-header-6 { color: var(--text-muted); }
+
+/* Masthead: the note title (inline title) is the front-page nameplate */
+.inline-title {
+  font-family: var(--bs-font-headline);
+  font-weight: 900;
+  font-size: 2.9em;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.32em;
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+  box-shadow: 0 6px 0 -4px var(--bs-rule-color);
+}
+
+/* Tiny "eyebrow" rule above the masthead */
+.inline-title::before {
+  content: "";
+  display: block;
+  width: 100%;
+  border-top: var(--bs-rule) solid var(--bs-rule-color);
+  margin-bottom: 0.45em;
+}
+
+/* Disable masthead/H1 rules when requested */
+body.bs-no-masthead .inline-title,
+body.bs-no-masthead .markdown-rendered h1 {
+  border-bottom: none;
+  box-shadow: none;
+}
+body.bs-no-masthead .inline-title::before { display: none; }
+
+/* ==========================================================================
+   6. DROP CAP  (first paragraph, reading view)
+   ========================================================================== */
+
+/* Target the first body paragraph: the .el-p right after the header block,
+   or the very first child block when no header is present. (Sibling div
+   wrappers in Obsidian's reading view make :first-of-type unreliable here.) */
+.markdown-reading-view .markdown-preview-sizer > .mod-header + .el-p > p:first-child::first-letter,
+.markdown-reading-view .markdown-preview-sizer > .el-p:first-child > p:first-child::first-letter {
+  font-family: var(--bs-font-headline);
+  font-weight: 800;
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.72;
+  padding: 0.04em 0.09em 0 0;
+  margin-right: 0.02em;
+  color: var(--text-normal);
+}
+body.bs-no-dropcaps .markdown-reading-view .markdown-preview-sizer > .mod-header + .el-p > p:first-child::first-letter,
+body.bs-no-dropcaps .markdown-reading-view .markdown-preview-sizer > .el-p:first-child > p:first-child::first-letter {
+  font-family: inherit; font-weight: inherit; float: none;
+  font-size: inherit; line-height: inherit; padding: 0; margin: 0;
+}
+
+/* ==========================================================================
+   7. PULL-QUOTES, RULES, LISTS
+   ========================================================================== */
+
+/* Blockquote → editorial pull-quote */
+.markdown-rendered blockquote {
+  font-family: var(--bs-font-headline);
+  font-style: italic;
+  font-size: 1.18em;
+  line-height: 1.4;
+  color: var(--text-normal);
+  border-left: var(--bs-rule-bold) solid var(--bs-accent);
+  padding: 0.1em 0 0.1em 1.1em;
+  margin-inline: 0;
+}
+.markdown-rendered blockquote p { margin-block: 0.35em; }
+
+/* Horizontal rule → newspaper section divider with center ornament */
+.markdown-rendered hr {
+  border: none;
+  height: var(--bs-rule);
+  background: var(--bs-rule-color);
+  margin: 2.2em 0;
+  position: relative;
+  overflow: visible;
+}
+.markdown-rendered hr::after {
+  content: "§";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--background-primary);
+  padding: 0 0.5em;
+  font-family: var(--bs-font-headline);
+  font-size: 1.1rem;
+  color: var(--bs-accent-text);
+}
+
+/* Lists — tighten, accent the markers */
+.markdown-rendered ul > li::marker { color: var(--bs-accent); }
+.markdown-rendered ol > li::marker { color: var(--text-muted); font-variant-numeric: oldstyle-nums; }
+
+/* ==========================================================================
+   8. TABLES  (newspaper data ruling)
+   ========================================================================== */
+
+.markdown-rendered table {
+  border-collapse: collapse;
+  font-size: 0.92em;
+  border-top: var(--bs-rule-bold) solid var(--bs-rule-color);
+  border-bottom: var(--bs-rule-bold) solid var(--bs-rule-color);
+}
+.markdown-rendered thead { border-bottom: var(--bs-rule) solid var(--bs-rule-color); }
+.markdown-rendered th {
+  font-family: var(--bs-font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.82em;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+}
+.markdown-rendered td, .markdown-rendered th {
+  border-left: none; border-right: none;
+  border-bottom: var(--bs-rule) solid var(--bs-rule-soft);
+  padding: 0.4em 0.8em;
+}
+.markdown-rendered tbody tr:last-child td { border-bottom: none; }
+
+/* ==========================================================================
+   9. CODE
+   ========================================================================== */
+
+.markdown-rendered code,
+.cm-inline-code {
+  font-family: var(--font-monospace-theme);
+  font-size: 0.86em;
+  background: var(--code-background);
+  border: var(--bs-rule) solid var(--bs-rule-soft);
+  border-radius: var(--radius-s);
+  padding: 0.1em 0.36em;
+}
+.markdown-rendered pre {
+  background: var(--code-background);
+  border: var(--bs-rule) solid var(--bs-rule-soft);
+  border-left: var(--bs-rule-bold) solid var(--bs-rule-color);
+  border-radius: 0 var(--radius-m) var(--radius-m) 0;
+}
+.markdown-rendered pre code {
+  border: none; background: none; padding: 0;
+}
+
+/* ==========================================================================
+   10. TAGS  (newspaper "kicker" labels)
+   ========================================================================== */
+
+.markdown-rendered a.tag,
+.cm-hashtag {
+  font-family: var(--bs-font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7em;
+  font-weight: 600;
+  color: var(--bs-accent-text);
+  background: color-mix(in srgb, var(--bs-accent) 10%, transparent);
+  border: var(--bs-rule) solid color-mix(in srgb, var(--bs-accent) 35%, transparent);
+  border-radius: 2px;
+  padding: 0.12em 0.5em;
+  text-decoration: none;
+  vertical-align: 0.08em;
+}
+.markdown-rendered a.tag:hover {
+  background: var(--bs-accent);
+  color: var(--text-on-accent);
+}
+
+/* ==========================================================================
+   11. CALLOUTS  (boxed editorial notes)
+   ========================================================================== */
+
+.callout {
+  border: var(--bs-rule) solid var(--bs-rule-color);
+  border-left: var(--bs-rule-bold) solid var(--callout-color, var(--bs-accent));
+  border-radius: 0 var(--radius-m) var(--radius-m) 0;
+  background: var(--background-primary-alt);
+  mix-blend-mode: normal;
+}
+.callout-title {
+  font-family: var(--bs-font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.82em;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   12. EDITOR / LIVE PREVIEW
+   ========================================================================== */
+
+.cm-s-obsidian .HyperMD-quote {
+  font-family: var(--bs-font-headline);
+  font-style: italic;
+}
+.cm-formatting-list,
+.cm-formatting-quote { color: var(--bs-accent); }
+
+/* Active line / selection in the accent tint already set via --text-selection */
+
+/* ==========================================================================
+   13. WORKSPACE CHROME  —  tabs, sidebars, ribbon, status bar, title bar
+   ========================================================================== */
+
+.workspace,
+.workspace-split.mod-root { background: var(--background-primary); }
+
+/* Title bar / tab header strip */
+.workspace-tab-header-container,
+.titlebar {
+  background: var(--titlebar-background);
+  border-bottom: var(--bs-rule) solid var(--bs-rule-color);
+}
+
+/* Tabs — flat, with an accent underline on the active tab */
+.workspace-tab-header {
+  border-radius: 0;
+}
+.workspace-tab-header-inner {
+  font-family: var(--bs-font-label);
+  font-size: 0.84em;
+  letter-spacing: 0.02em;
+}
+.workspace-tab-header.is-active {
+  background: var(--background-primary);
+  box-shadow: inset 0 -2px 0 0 var(--bs-accent);
+}
+.workspace-tab-header.is-active .workspace-tab-header-inner-title {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+/* Sidebars */
+.workspace-split.mod-left-split,
+.workspace-split.mod-right-split {
+  background: var(--background-secondary);
+}
+.workspace-split.mod-left-split { border-right: var(--bs-rule) solid var(--bs-rule-color); }
+.workspace-split.mod-right-split { border-left: var(--bs-rule) solid var(--bs-rule-color); }
+
+/* Ribbon */
+.workspace-ribbon {
+  background: var(--background-secondary);
+  border-right: var(--bs-rule) solid var(--bs-rule-color);
+}
+
+/* Status bar */
+.status-bar {
+  background: var(--background-secondary);
+  border-top: var(--bs-rule) solid var(--bs-rule-color);
+  font-family: var(--bs-font-label);
+  font-size: 0.72em;
+  letter-spacing: 0.02em;
+}
+
+/* Sidebar section headers → small-caps masthead labels */
+.nav-header,
+.workspace-leaf-content .view-header-title-container,
+.tree-item-self.is-clickable.mod-collapsible.nav-folder-title {
+  font-family: var(--bs-font-label);
+}
+.nav-folder-title-content {
+  font-family: var(--bs-font-label);
+  font-size: 0.9em;
+}
+.nav-file-title-content {
+  font-family: var(--bs-font-label);
+  font-size: 0.9em;
+}
+
+/* Active file in explorer gets an accent flag */
+.nav-file-title.is-active {
+  box-shadow: inset 2px 0 0 0 var(--bs-accent);
+  background: var(--background-modifier-hover);
+}
+
+/* View header titles */
+.view-header-title {
+  font-family: var(--bs-font-headline);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   14. SEARCH, COMMAND PALETTE, MENUS, MODALS
+   ========================================================================== */
+
+.prompt {
+  border: var(--bs-rule) solid var(--bs-rule-color);
+  border-radius: var(--modal-radius);
+}
+.prompt-input {
+  font-family: var(--bs-font-headline);
+  font-size: 1.1em;
+}
+.suggestion-item.is-selected {
+  background: var(--background-modifier-hover);
+  box-shadow: inset 2px 0 0 0 var(--bs-accent);
+}
+.menu {
+  border: var(--bs-rule) solid var(--bs-rule-color);
+  border-radius: var(--radius-m);
+}
+.menu-item:hover { box-shadow: inset 2px 0 0 0 var(--bs-accent); }
+
+.modal {
+  border: var(--bs-rule) solid var(--bs-rule-color);
+}
+.modal-title {
+  font-family: var(--bs-font-headline);
+  font-weight: 700;
+}
+
+/* Search result counts / matches */
+.search-result-file-matched-text {
+  background: var(--text-highlight-bg);
+  color: var(--text-normal);
+}
+
+/* ==========================================================================
+   15. PROPERTIES / METADATA  (small-caps masthead style)
+   ========================================================================== */
+
+.metadata-container {
+  border-top: var(--bs-rule) solid var(--bs-rule-soft);
+  border-bottom: var(--bs-rule) solid var(--bs-rule-soft);
+  padding-block: 0.4em;
+}
+.metadata-property-key {
+  font-family: var(--bs-font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   16. BUTTONS, CHECKBOXES, INPUTS
+   ========================================================================== */
+
+button.mod-cta,
+.mod-cta {
+  font-family: var(--bs-font-label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-m);
+}
+
+input[type="checkbox"] {
+  border-radius: 2px;
+}
+.markdown-rendered .task-list-item-checkbox {
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   17. STYLE-SETTINGS TOGGLES  (justify, small-caps off)
+   ========================================================================== */
+
+body.bs-justify .markdown-rendered p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+body.bs-no-smallcaps .markdown-rendered h4,
+body.bs-no-smallcaps .markdown-rendered h5,
+body.bs-no-smallcaps .markdown-rendered h6,
+body.bs-no-smallcaps .markdown-rendered a.tag,
+body.bs-no-smallcaps .metadata-property-key,
+body.bs-no-smallcaps .markdown-rendered th {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* ==========================================================================
+   18. SCROLLBARS
+   ========================================================================== */
+
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb {
+  background: var(--bs-rule-soft);
+  border: 3px solid var(--background-primary);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ==========================================================================
+   end Broadsheet
+   ========================================================================== */

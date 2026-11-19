@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Offline preview for snippets/Colored Sidebar Items (Broadsheet).css (adapted from CyanVoxel, MIT — see THIRD_PARTY_NOTICES.md). -->
+<head>
+<meta charset="utf-8">
+<title>Broadsheet — Sidebar preview</title>
+<style>
+/* Broadsheet sidebar tokens */
+.theme-light{ --background-secondary:#f1efe8; --text-muted:#45433b; --text-normal:#16150f; }
+.theme-dark { --background-secondary:#0e0d12; --text-muted:#a6a294; --text-normal:#eae8df; }
+
+/* ---- snippet foundational vars (Broadsheet edition, mirror) ---- */
+.pane{
+  --mint:#52eea3; --cyan:#51e1e9; --light-blue:#54b6f8; --blue:#437cf3;
+  --violet:#9446f8; --purple:#c952ed; --magenta:#e54f9b; --hot-red:#e3365e;
+  --cool-gray:#515768;
+  --highlight:#fbfaf6; --shadow:#16150f;
+}
+.theme-light.pane{
+  --default-text-color:var(--text-muted);
+  --medium-contrast-amount:60%;
+  --mint:color-mix(in srgb,#52eea3 84%,var(--shadow));
+  --cyan:color-mix(in srgb,#51e1e9 84%,var(--shadow));
+  --light-blue:color-mix(in srgb,#54b6f8 88%,var(--shadow));
+}
+.theme-dark.pane{
+  --default-text-color:var(--text-muted);
+  --medium-contrast-amount:22%;
+}
+
+/* ---- layout ---- */
+*{box-sizing:border-box;}
+body{margin:0;padding:32px;gap:32px;display:flex;justify-content:center;background:#2a2a2e;font-family:"Inter",sans-serif;}
+.col{flex:0 0 320px;}
+.col-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#b8b6ae;margin:0 0 8px 4px;}
+.pane{
+  background:var(--background-secondary); border-radius:8px; padding:14px 10px;
+  box-shadow:0 16px 44px rgba(0,0,0,.45); font-size:14px;
+}
+.folder{ font-weight:700; padding:4px 8px 4px 14px; border-radius:5px; }
+.file{ padding:3px 8px 3px 28px; font-weight:400; }
+.file.active{ box-shadow:inset 2px 0 0 0 currentColor; border-radius:4px;
+  background:color-mix(in srgb,currentColor 12%,transparent); }
+.plain{ color:var(--text-muted); }
+
+/* folder colors (match snippet prefix rules) */
+.f00{color:var(--mint);}   .f01{color:var(--cyan);}     .f02{color:var(--light-blue);}
+.f03{color:var(--blue);}   .f04{color:var(--violet);}   .f05{color:var(--purple);}
+.f06{color:var(--magenta);}.f07{color:var(--hot-red);}  .f99{color:var(--cool-gray);}
+/* nested file color = color-mix(folder, default-text) per snippet */
+.n00{color:color-mix(in srgb,var(--mint) var(--medium-contrast-amount),var(--default-text-color));}
+.n03{color:color-mix(in srgb,var(--blue) var(--medium-contrast-amount),var(--default-text-color));}
+.n06{color:color-mix(in srgb,var(--magenta) var(--medium-contrast-amount),var(--default-text-color));}
+</style>
+</head>
+<body>
+
+<div class="col">
+  <p class="col-label">Day · light sidebar</p>
+  <div class="pane theme-light">
+    <div class="folder f00">00 — Maps of Content</div>
+    <div class="file n00">⌞ Index.md</div>
+    <div class="file n00 active">⌞ Home.md</div>
+    <div class="folder f01">01 — Inbox</div>
+    <div class="folder f02">02 — Projects</div>
+    <div class="folder f03">03 — Areas</div>
+    <div class="file n03">⌞ Health.md</div>
+    <div class="folder f04">04 — Resources</div>
+    <div class="folder f05">05 — Archive</div>
+    <div class="folder f06">06 — People</div>
+    <div class="file n06 active">⌞ Ada Lovelace.md</div>
+    <div class="folder f07">07 — Journal</div>
+    <div class="folder f99">99 — Meta</div>
+    <div class="file plain">⌞ untitled.md</div>
+  </div>
+</div>
+
+<div class="col">
+  <p class="col-label">Night Print · dark sidebar</p>
+  <div class="pane theme-dark">
+    <div class="folder f00">00 — Maps of Content</div>
+    <div class="file n00">⌞ Index.md</div>
+    <div class="file n00 active">⌞ Home.md</div>
+    <div class="folder f01">01 — Inbox</div>
+    <div class="folder f02">02 — Projects</div>
+    <div class="folder f03">03 — Areas</div>
+    <div class="file n03">⌞ Health.md</div>
+    <div class="folder f04">04 — Resources</div>
+    <div class="folder f05">05 — Archive</div>
+    <div class="folder f06">06 — People</div>
+    <div class="file n06 active">⌞ Ada Lovelace.md</div>
+    <div class="folder f07">07 — Journal</div>
+    <div class="folder f99">99 — Meta</div>
+    <div class="file plain">⌞ untitled.md</div>
+  </div>
+</div>
+
+</body>
+</html>

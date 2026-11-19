@@ -1,0 +1,201 @@
+/*------------------------------------------------------------------------------
+              Daily Note Themes — BROADSHEET EDITION  (v1.0)
+
+   Adapted for the Broadsheet newspaper theme from CyanVoxel's "Daily Note
+   Themes" v1.0.5 (https://github.com/CyanVoxel/Obsidian-Daily-Themes).
+   Keeps the per-weekday color identity, but expresses it the newspaper way:
+   the day's hue drives Broadsheet's accent (links, list markers, the H4
+   kicker, callout spines, tag chips, the § divider) and tints the masthead,
+   over a faint "edition" wash of the paper. Works in both Day (light) and
+   Night Print (dark).
+
+   USAGE — add the classes to a daily note's properties:
+       cssclasses:
+         - daily
+         - monday
+   (lowercase or Capitalized weekday names both work.)
+
+   To recolor a day, change only its --day hex below; every shade derives
+   from it automatically.
+
+   -----------------------------------------------------------------------------
+   MIT License
+
+   Original work Copyright (c) 2024 Travis Abendshien (CyanVoxel)
+   Broadsheet adaptation Copyright (c) 2026 Andre Romero
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to
+   deal in the Software without restriction, including without limitation the
+   rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+   sell copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+   IN THE SOFTWARE.
+------------------------------------------------------------------------------*/
+
+/* ---------------------------- Per-weekday hue ----------------------------- */
+.daily { --day: var(--bs-accent, #1b3fe6); }            /* fallback = accent  */
+.daily.sunday,    .daily.Sunday    { --day: #e5396b; }  /* rose    */
+.daily.monday,    .daily.Monday    { --day: #e5453a; }  /* red     */
+.daily.tuesday,   .daily.Tuesday   { --day: #2f78e8; }  /* blue    */
+.daily.wednesday, .daily.Wednesday { --day: #e0b400; }  /* gold    */
+.daily.thursday,  .daily.Thursday  { --day: #e0561d; }  /* orange  */
+.daily.friday,    .daily.Friday    { --day: #5bbf2e; }  /* green   */
+.daily.saturday,  .daily.Saturday  { --day: #d22a3a; }  /* crimson */
+
+/* ----------- Derive readable shades per appearance mode ------------------- */
+/* In light mode shades darken toward ink; in dark mode they lift toward paper,
+   so the day color always reads on the current background.                   */
+.theme-light .daily {
+  --day-fill:  color-mix(in srgb, var(--day) 90%, var(--bs-ink, #16150f));
+  --day-text:  color-mix(in srgb, var(--day) 70%, var(--bs-ink, #16150f));
+  --day-hover: color-mix(in srgb, var(--day) 52%, var(--bs-ink, #16150f));
+  --day-wash:  color-mix(in srgb, var(--day) 6%,  var(--bs-paper, #f7f6f1));
+  --day-wash2: color-mix(in srgb, var(--day) 9%,  var(--bs-paper-2, #f1efe8));
+}
+.theme-dark .daily {
+  --day-fill:  color-mix(in srgb, var(--day) 96%, var(--bs-ink, #eae8df));
+  --day-text:  color-mix(in srgb, var(--day) 84%, var(--bs-ink, #eae8df));
+  --day-hover: color-mix(in srgb, var(--day) 68%, var(--bs-ink, #eae8df));
+  --day-wash:  color-mix(in srgb, var(--day) 10%, var(--bs-paper, #131217));
+  --day-wash2: color-mix(in srgb, var(--day) 13%, var(--bs-paper-2, #0e0d12));
+}
+
+/* ------------- Route the day color through Broadsheet's accent ------------ */
+.daily {
+  /* Broadsheet uses these tokens directly across components */
+  --bs-accent: var(--day-fill);
+  --bs-accent-text: var(--day-text);
+  --bs-accent-hover: var(--day-hover);
+
+  /* re-declare the Obsidian-native vars Broadsheet sets on <body> so they
+     recompute with the day color inside the note */
+  --interactive-accent: var(--day-fill);
+  --interactive-accent-hover: var(--day-hover);
+  --text-accent: var(--day-text);
+  --text-accent-hover: var(--day-hover);
+  --link-color: var(--day-text);
+  --link-color-hover: var(--day-hover);
+  --tag-color: var(--day-text);
+  --checkbox-color: var(--day-fill);
+  --list-marker-color: var(--day-fill);
+  --collapse-icon-color-collapsed: var(--day-fill);
+
+  /* faint colored "edition" wash on the page (keeps masks/§ consistent) */
+  --background-primary: var(--day-wash);
+  --background-primary-alt: var(--day-wash2);
+}
+
+/* ------------------------------ Masthead ---------------------------------- */
+/* The note title + H1 carry the day color and a day-tinted double rule. */
+.daily :is(h1, .HyperMD-header-1),
+.daily :is(h2, .HyperMD-header-2),
+.daily :is(h3, .HyperMD-header-3) {
+  text-align: center;
+  font-family: var(--bs-font-headline, Georgia, serif);
+}
+
+/* The filename (inline) title. Obsidian sometimes applies cssclasses to an
+   inner container that excludes the inline title, so .daily can't reach it.
+   We set the day color on the surrounding leaf via :has() and let the title
+   inherit it — works wherever the class lands. */
+.workspace-leaf-content:has(.daily.sunday),    .workspace-leaf-content:has(.daily.Sunday)    { --mt-day: #e5396b; }
+.workspace-leaf-content:has(.daily.monday),    .workspace-leaf-content:has(.daily.Monday)    { --mt-day: #e5453a; }
+.workspace-leaf-content:has(.daily.tuesday),   .workspace-leaf-content:has(.daily.Tuesday)   { --mt-day: #2f78e8; }
+.workspace-leaf-content:has(.daily.wednesday), .workspace-leaf-content:has(.daily.Wednesday) { --mt-day: #e0b400; }
+.workspace-leaf-content:has(.daily.thursday),  .workspace-leaf-content:has(.daily.Thursday)  { --mt-day: #e0561d; }
+.workspace-leaf-content:has(.daily.friday),    .workspace-leaf-content:has(.daily.Friday)    { --mt-day: #5bbf2e; }
+.workspace-leaf-content:has(.daily.saturday),  .workspace-leaf-content:has(.daily.Saturday)  { --mt-day: #d22a3a; }
+
+.theme-light .workspace-leaf-content:has(.daily) {
+  --mt-fill: color-mix(in srgb, var(--mt-day) 90%, var(--bs-ink, #16150f));
+  --mt-text: color-mix(in srgb, var(--mt-day) 70%, var(--bs-ink, #16150f));
+}
+.theme-dark .workspace-leaf-content:has(.daily) {
+  --mt-fill: color-mix(in srgb, var(--mt-day) 96%, var(--bs-ink, #eae8df));
+  --mt-text: color-mix(in srgb, var(--mt-day) 84%, var(--bs-ink, #eae8df));
+}
+.workspace-leaf-content:has(.daily) .inline-title {
+  text-align: center;
+  color: var(--mt-text) !important;
+  border-bottom-color: var(--mt-fill);
+  box-shadow: 0 6px 0 -4px var(--mt-fill);
+}
+.workspace-leaf-content:has(.daily) .inline-title::before { border-top-color: var(--mt-fill); }
+
+.daily :is(h1, .HyperMD-header-1) {
+  color: var(--day-text);
+  border-bottom-color: var(--day-fill);
+  box-shadow: 0 5px 0 -3.5px var(--day-fill);
+}
+.daily :is(h2, .HyperMD-header-2) {
+  color: var(--day-text);
+  font-style: italic;
+  border-bottom-color: var(--day-fill);
+}
+.daily :is(h3, .HyperMD-header-3) { color: var(--day-text); }
+
+/* H4 — the signature kicker pill, auto-contrasting in both modes (pill = the
+   readable day shade; text = paper, always the opposite lightness).
+
+   Two render paths need different handling:
+   • Reading view: the <h4> block IS the pill — shrink it and center with auto
+     margins.
+   • Live Preview: a CodeMirror line won't shrink to a pill (it stays full
+     width), so we don't put the background on the line. Instead the line just
+     centers its content, and the inner text span becomes the pill. */
+.daily h4 {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin: 0.6em auto 0.3em;
+  background: var(--day-text);
+  color: var(--bs-paper, #fff);
+  font-family: var(--bs-font-label, sans-serif);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8em;
+  line-height: 1.35;
+  padding: 0.14em 0.62em;
+  border-radius: 4px;
+}
+.daily .HyperMD-header-4 {
+  text-align: center;
+  background: none !important;
+  line-height: 1.4;
+}
+.daily .HyperMD-header-4 .cm-header:not(.cm-formatting) {
+  display: inline-block;
+  background: var(--day-text);
+  color: var(--bs-paper, #fff);
+  font-family: var(--bs-font-label, sans-serif);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85em;
+  line-height: 1.3;
+  padding: 0.12em 0.6em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ------------------------------ Body bits --------------------------------- */
+.daily p { margin-top: 0.4em; margin-bottom: 0.4em; }
+.daily hr { margin-top: 1.4em !important; margin-bottom: 1.4em !important; }
+.daily img {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}

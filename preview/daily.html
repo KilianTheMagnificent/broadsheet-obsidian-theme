@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Offline preview for snippets/Daily Note Themes (Broadsheet).css (adapted from CyanVoxel, MIT — see THIRD_PARTY_NOTICES.md). -->
+<head>
+<meta charset="utf-8">
+<title>Broadsheet — Daily Notes preview</title>
+<style>
+.paper {
+  --font-text-theme:"Newsreader","Source Serif 4",Georgia,"Times New Roman",serif;
+  --bs-font-headline:"Playfair Display","Newsreader",Georgia,serif;
+  --bs-font-label:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --bs-rule:1px; --bs-rule-bold:3px;
+}
+.theme-light {
+  --bs-paper:#f7f6f1; --bs-paper-2:#f1efe8; --bs-paper-3:#eae8df;
+  --bs-ink:#16150f; --bs-ink-soft:#45433b; --bs-ink-faint:#8c897d;
+  --bs-rule-color:#1b1a14; --bs-rule-soft:#d8d5c9;
+  --bs-accent:#1b3fe6; --bs-accent-text:#1531c4;
+}
+.theme-dark {
+  --bs-paper:#131217; --bs-paper-2:#0e0d12; --bs-paper-3:#1b1a21;
+  --bs-ink:#eae8df; --bs-ink-soft:#a6a294; --bs-ink-faint:#6b6859;
+  --bs-rule-color:#e7e4d8; --bs-rule-soft:#2b2a33;
+  --bs-accent:#5470ff; --bs-accent-text:#93a6ff;
+}
+
+/* ===== daily layer (mirror of the snippet) ===== */
+.daily{ --day:var(--bs-accent); }
+.daily.monday{ --day:#e5453a; }
+.daily.tuesday{ --day:#2f78e8; }
+.daily.friday{ --day:#5bbf2e; }
+.daily.saturday{ --day:#d22a3a; }
+.daily.wednesday{ --day:#e0b400; }
+.theme-light .daily{
+  --day-fill:color-mix(in srgb,var(--day) 90%,var(--bs-ink));
+  --day-text:color-mix(in srgb,var(--day) 70%,var(--bs-ink));
+  --day-hover:color-mix(in srgb,var(--day) 52%,var(--bs-ink));
+  --day-wash:color-mix(in srgb,var(--day) 6%,var(--bs-paper));
+  --day-wash2:color-mix(in srgb,var(--day) 9%,var(--bs-paper-2));
+}
+.theme-dark .daily{
+  --day-fill:color-mix(in srgb,var(--day) 96%,var(--bs-ink));
+  --day-text:color-mix(in srgb,var(--day) 84%,var(--bs-ink));
+  --day-hover:color-mix(in srgb,var(--day) 68%,var(--bs-ink));
+  --day-wash:color-mix(in srgb,var(--day) 10%,var(--bs-paper));
+  --day-wash2:color-mix(in srgb,var(--day) 13%,var(--bs-paper-2));
+}
+.daily{
+  --bs-accent:var(--day-fill); --bs-accent-text:var(--day-text);
+  --background-primary:var(--day-wash); --background-primary-alt:var(--day-wash2);
+}
+
+/* ===== page chrome ===== */
+*{box-sizing:border-box;}
+body{margin:0;padding:28px;gap:28px;display:flex;flex-wrap:wrap;justify-content:center;background:#2a2a2e;font-family:"Inter",sans-serif;}
+.stage{flex:1 1 600px;max-width:680px;}
+.stage-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#b8b6ae;margin:0 0 8px 4px;}
+.paper{
+  background:var(--background-primary,var(--bs-paper)); color:var(--bs-ink);
+  font-family:var(--font-text-theme); font-size:17px; line-height:1.6;
+  padding:40px 48px 44px; border-radius:6px; box-shadow:0 16px 44px rgba(0,0,0,.45);
+  -webkit-font-smoothing:antialiased; font-feature-settings:"onum" 1;
+}
+
+/* ===== components (subset of Broadsheet) ===== */
+.inline-title{
+  font-family:var(--bs-font-headline); font-weight:900; font-size:2.5em; line-height:1.04;
+  letter-spacing:-.02em; text-align:center; margin:0 0 .45em; padding-bottom:.3em;
+  color:var(--bs-ink); border-bottom:var(--bs-rule-bold) solid var(--bs-rule-color);
+  box-shadow:0 6px 0 -4px var(--bs-rule-color);
+}
+.inline-title::before{content:"";display:block;width:100%;border-top:var(--bs-rule) solid var(--bs-rule-color);margin-bottom:.4em;}
+.byline{font-family:var(--bs-font-label);text-transform:uppercase;letter-spacing:.14em;font-size:.7em;color:var(--bs-ink-soft);text-align:center;margin:-.1em 0 1.6em;}
+
+h2{font-family:var(--bs-font-headline);font-weight:700;font-size:1.6em;border-bottom:var(--bs-rule) solid var(--bs-rule-color);padding-bottom:.12em;margin:1.1em 0 .5em;}
+h4{margin:1.2em 0 .3em;font-size:1em;}
+p{margin:.4em 0;}
+.lead>p:first-of-type::first-letter{font-family:var(--bs-font-headline);font-weight:800;float:left;font-size:3.2em;line-height:.72;padding:.04em .09em 0 0;}
+a{color:var(--bs-accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;text-decoration-color:color-mix(in srgb,var(--bs-accent) 45%,transparent);}
+blockquote{font-family:var(--bs-font-headline);font-style:italic;font-size:1.12em;line-height:1.4;border-left:var(--bs-rule-bold) solid var(--bs-accent);padding:.1em 0 .1em 1em;margin:.9em 0;}
+hr{border:none;height:var(--bs-rule);background:var(--bs-rule-color);margin:1.4em 0;position:relative;overflow:visible;}
+hr::after{content:"§";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--background-primary,var(--bs-paper));padding:0 .5em;font-family:var(--bs-font-headline);color:var(--bs-accent-text);}
+ul{padding-left:1.3em;} li{margin:.15em 0;} ul li::marker{color:var(--bs-accent);}
+.tag{font-family:var(--bs-font-label);text-transform:uppercase;letter-spacing:.08em;font-size:.7em;font-weight:600;color:var(--bs-accent-text);background:color-mix(in srgb,var(--bs-accent) 10%,transparent);border:var(--bs-rule) solid color-mix(in srgb,var(--bs-accent) 35%,transparent);border-radius:2px;padding:.12em .5em;text-decoration:none;white-space:nowrap;}
+.callout{border:var(--bs-rule) solid var(--bs-rule-color);border-left:var(--bs-rule-bold) solid var(--bs-accent);border-radius:0 4px 4px 0;background:var(--background-primary-alt,var(--bs-paper-2));padding:12px 16px;margin:.9em 0;}
+.callout-title{font-family:var(--bs-font-label);text-transform:uppercase;letter-spacing:.1em;font-size:.8em;font-weight:700;margin-bottom:.3em;display:flex;align-items:center;gap:.5em;}
+.callout-title .dot{width:.6em;height:.6em;background:var(--bs-accent);border-radius:50%;}
+.callout p{margin:0;}
+
+/* ===== daily overrides (mirror of the snippet) ===== */
+.daily .inline-title,.daily h2{text-align:center;}
+.daily .inline-title{color:var(--day-text);border-bottom-color:var(--day-fill);box-shadow:0 6px 0 -4px var(--day-fill);}
+.daily .inline-title::before{border-top-color:var(--day-fill);}
+.daily h2{color:var(--day-text);font-style:italic;border-bottom-color:var(--day-fill);text-align:center;}
+.daily h4{
+  display:inline-block;width:fit-content;background:var(--day-text);color:var(--bs-paper);
+  font-family:var(--bs-font-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  font-size:.9em;padding:.12em .55em;border-radius:5px;
+}
+</style>
+</head>
+<body>
+
+<div class="stage theme-light">
+  <p class="stage-label">Monday · Day</p>
+  <article class="paper daily monday">
+    <div class="inline-title">2026-06-01</div>
+    <p class="byline">Monday &nbsp;·&nbsp; Daily Edition</p>
+    <div class="lead"><p>Each weekday keeps its color, now drawn in newsprint. <a href="#">Links</a>, markers and the divider all pick up Monday's red.</p></div>
+    <h4>Morning</h4>
+    <ul><li>Stand-up at nine</li><li>Draft the column</li></ul>
+    <blockquote>“A red-letter day, set in red.”</blockquote>
+    <p><a class="tag" href="#">#log</a> <a class="tag" href="#">#daily</a></p>
+    <hr>
+    <div class="callout"><div class="callout-title"><span class="dot"></span>Note</div><p>Callout spine and § take the day's hue.</p></div>
+  </article>
+</div>
+
+<div class="stage theme-dark">
+  <p class="stage-label">Monday · Night Print</p>
+  <article class="paper daily monday">
+    <div class="inline-title">2026-06-01</div>
+    <p class="byline">Monday &nbsp;·&nbsp; Daily Edition</p>
+    <div class="lead"><p>Each weekday keeps its color, now drawn in newsprint. <a href="#">Links</a>, markers and the divider all pick up Monday's red.</p></div>
+    <h4>Morning</h4>
+    <ul><li>Stand-up at nine</li><li>Draft the column</li></ul>
+    <blockquote>“A red-letter day, set in red.”</blockquote>
+    <p><a class="tag" href="#">#log</a> <a class="tag" href="#">#daily</a></p>
+    <hr>
+    <div class="callout"><div class="callout-title"><span class="dot"></span>Note</div><p>Callout spine and § take the day's hue.</p></div>
+  </article>
+</div>
+
+<div class="stage theme-light">
+  <p class="stage-label">Tuesday · Day &nbsp;(blue)</p>
+  <article class="paper daily tuesday">
+    <div class="inline-title">2026-06-02</div>
+    <p class="byline">Tuesday &nbsp;·&nbsp; Daily Edition</p>
+    <div class="lead"><p>Tuesday runs blue. The masthead, kicker and tags shift together while the body stays crisp ink on paper.</p></div>
+    <h4>Agenda</h4>
+    <ul><li>Review notes</li><li>Ship the draft</li></ul>
+    <p><a class="tag" href="#">#log</a> <a class="tag" href="#">#daily</a></p>
+    <hr>
+    <div class="callout"><div class="callout-title"><span class="dot"></span>Note</div><p>One hue, applied consistently.</p></div>
+  </article>
+</div>
+
+<div class="stage theme-dark">
+  <p class="stage-label">Friday · Night Print &nbsp;(green)</p>
+  <article class="paper daily friday">
+    <div class="inline-title">2026-06-05</div>
+    <p class="byline">Friday &nbsp;·&nbsp; Daily Edition</p>
+    <div class="lead"><p>Friday goes green, lifted just enough to pop on the inky stock without shouting.</p></div>
+    <h4>Wrap-up</h4>
+    <ul><li>Weekly review</li><li>Plan the weekend</li></ul>
+    <p><a class="tag" href="#">#log</a> <a class="tag" href="#">#daily</a></p>
+    <hr>
+    <div class="callout"><div class="callout-title"><span class="dot"></span>Note</div><p>Readable in both editions.</p></div>
+  </article>
+</div>
+
+</body>
+</html>

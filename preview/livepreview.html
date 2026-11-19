@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Broadsheet — Live Preview check</title>
+<style>
+.theme-dark{
+  --bs-paper:#131217; --bs-paper-2:#0e0d12; --bs-paper-3:#1b1a21;
+  --bs-ink:#eae8df; --bs-ink-soft:#a6a294; --bs-rule-color:#e7e4d8; --bs-rule-soft:#2b2a33;
+  --bs-accent:#5470ff; --bs-accent-text:#93a6ff;
+  --text-normal:#eae8df; --text-muted:#a6a294; --background-primary:#131217;
+  --font-text-theme:"Newsreader","Source Serif 4",Georgia,"Times New Roman",serif;
+  --bs-font-headline:"Playfair Display","Newsreader",Georgia,serif; --bs-font-label:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --bs-rule:1px; --bs-rule-bold:3px;
+}
+/* ---- daily layer (mirror of snippet) — class is on the INNER .cm-content ---- */
+.daily.monday{ --day:#e5453a; }
+.theme-dark .daily{
+  --day-fill:color-mix(in srgb,var(--day) 96%,var(--bs-ink));
+  --day-text:color-mix(in srgb,var(--day) 84%,var(--bs-ink));
+}
+.daily{ --bs-accent:var(--day-fill); --bs-accent-text:var(--day-text); }
+
+/* ---- NEW robust masthead via :has() on the leaf ---- */
+.workspace-leaf-content:has(.daily.monday){ --mt-day:#e5453a; }
+.theme-dark .workspace-leaf-content:has(.daily){
+  --mt-fill:color-mix(in srgb,var(--mt-day) 96%,var(--bs-ink));
+  --mt-text:color-mix(in srgb,var(--mt-day) 84%,var(--bs-ink));
+}
+.workspace-leaf-content:has(.daily) .inline-title{
+  text-align:center; color:var(--mt-text)!important;
+  border-bottom-color:var(--mt-fill); box-shadow:0 6px 0 -4px var(--mt-fill);
+}
+.workspace-leaf-content:has(.daily) .inline-title::before{ border-top-color:var(--mt-fill); }
+
+/* ===== Broadsheet heading + masthead CSS (as in theme.css) ===== */
+.inline-title{font-family:var(--bs-font-headline);font-weight:900;font-size:2.9em;line-height:1.04;letter-spacing:-.02em;text-align:center;margin:0 0 .5em;padding-bottom:.32em;color:var(--text-normal);border-bottom:var(--bs-rule-bold) solid var(--bs-rule-color);box-shadow:0 6px 0 -4px var(--bs-rule-color);}
+.inline-title::before{content:"";display:block;width:100%;border-top:var(--bs-rule) solid var(--bs-rule-color);margin-bottom:.45em;}
+.HyperMD-header-1,.HyperMD-header-2,.HyperMD-header-3{font-family:var(--bs-font-headline);letter-spacing:-.012em;}
+.HyperMD-header-1{line-height:1.08;font-size:2.55em;font-weight:800;}
+.HyperMD-header-2{line-height:1.12;font-size:1.85em;font-weight:700;}
+.HyperMD-header-3{font-size:1.4em;font-weight:700;}
+.markdown-source-view.mod-cm6 .HyperMD-header-1{padding-bottom:.16em;border-bottom:var(--bs-rule-bold) solid var(--bs-rule-color);}
+.markdown-source-view.mod-cm6 .HyperMD-header-2{padding-bottom:.08em;border-bottom:var(--bs-rule) solid var(--bs-rule-color);}
+.HyperMD-header-4,.HyperMD-header-5,.HyperMD-header-6{font-family:var(--bs-font-label);text-transform:uppercase;letter-spacing:.14em;font-weight:700;}
+.HyperMD-header-4{color:var(--bs-accent-text);font-size:1em;}
+.HyperMD-header-5,.HyperMD-header-6{color:var(--text-muted);font-size:.84em;}
+
+/* daily content heading overrides (mirror of snippet) — .daily is on .cm-content */
+.daily :is(.HyperMD-header-1){text-align:center;font-family:var(--bs-font-headline);color:var(--day-text);border-bottom-color:var(--day-fill);}
+.daily :is(.HyperMD-header-2){text-align:center;font-family:var(--bs-font-headline);color:var(--day-text);font-style:italic;border-bottom-color:var(--day-fill);}
+.daily :is(.HyperMD-header-3){text-align:center;font-family:var(--bs-font-headline);color:var(--day-text);}
+/* Live Preview kicker: line centers its content; the inner text span is the pill */
+.daily .HyperMD-header-4{text-align:center;background:none!important;line-height:1.4;}
+.daily .HyperMD-header-4 .cm-header:not(.cm-formatting){display:inline-block;background:var(--day-text);color:var(--bs-paper);font-family:var(--bs-font-label);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.85em;line-height:1.3;padding:.12em .6em;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone;}
+
+/* ===== page chrome / fake editor (realistic nesting) ===== */
+*{box-sizing:border-box;} body{margin:0;padding:28px;gap:28px;display:flex;flex-wrap:wrap;justify-content:center;background:#2a2a2e;font-family:"Inter",sans-serif;}
+.stage{flex:1 1 560px;max-width:640px;}
+.stage-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#b8b6ae;margin:0 0 8px 4px;}
+.markdown-source-view{background:var(--background-primary);border-radius:6px;box-shadow:0 16px 44px rgba(0,0,0,.45);padding:36px 44px 40px;color:var(--text-normal);font-family:var(--font-text-theme);font-size:18px;line-height:1.6;}
+.cm-line{margin:.5em 0;} .cm-line.HyperMD-header-1,.cm-line.HyperMD-header-2{margin-top:.9em;} .body{margin-top:.6em;}
+</style></head>
+<body>
+
+<div class="stage theme-dark">
+  <p class="stage-label">Normal note · Live Preview</p>
+  <div class="workspace-leaf-content"><div class="view-content">
+    <div class="markdown-source-view mod-cm6"><div class="cm-editor"><div class="cm-scroller"><div class="cm-sizer">
+      <div class="inline-title">Test</div>
+      <div class="cm-contentContainer"><div class="cm-content">
+        <div class="cm-line HyperMD-header HyperMD-header-1">Header 1</div>
+        <div class="cm-line HyperMD-header HyperMD-header-2">Header 2</div>
+        <div class="cm-line HyperMD-header HyperMD-header-3">Header 3</div>
+        <div class="cm-line HyperMD-header HyperMD-header-4">Header 4</div>
+        <div class="cm-line HyperMD-header HyperMD-header-5">Header 5</div>
+        <div class="cm-line body">Regular body text in Newsreader, with an under-rule beneath the big headings — now visible while editing.</div>
+      </div></div>
+    </div></div></div></div>
+  </div></div>
+</div>
+
+<div class="stage theme-dark">
+  <p class="stage-label">Daily (Monday) · class on inner .cm-content</p>
+  <div class="workspace-leaf-content"><div class="view-content">
+    <div class="markdown-source-view mod-cm6"><div class="cm-editor"><div class="cm-scroller"><div class="cm-sizer">
+      <div class="inline-title">2026-06-01</div>
+      <div class="cm-contentContainer"><div class="cm-content daily monday">
+        <div class="cm-line HyperMD-header HyperMD-header-1">DAILY NOTE</div>
+        <div class="cm-line HyperMD-header HyperMD-header-2">Monday, June 1st, 2026</div>
+        <div class="cm-line HyperMD-header HyperMD-header-3">Journal</div>
+        <div class="cm-line HyperMD-header HyperMD-header-4"><span class="cm-formatting cm-formatting-header cm-header cm-header-4" style="display:none">#### </span><span class="cm-header cm-header-4">3:00 PM</span></div>
+        <div class="cm-line body">Now the filename title up top picks up Monday's red too — set via :has() on the leaf, so it works even though the cssclass sits on this inner container.</div>
+      </div></div>
+    </div></div></div></div>
+  </div></div>
+</div>
+
+</body></html>
