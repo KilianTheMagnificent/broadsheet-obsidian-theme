@@ -226,6 +226,7 @@ body {
 
   /* Default accent = Cobalt (overridden by accent presets below) */
   --bs-accent: #1b3fe6;
+  --bs-accent-rgb: 27, 63, 230;
   --bs-accent-hover: #1230c9;
   --bs-accent-text: #1531c4;
   --accent-h: 229;
@@ -277,6 +278,7 @@ body {
 
   /* Default accent = Cobalt */
   --bs-accent: #5470ff;
+  --bs-accent-rgb: 84, 112, 255;
   --bs-accent-hover: #6e86ff;
   --bs-accent-text: #93a6ff;
   --accent-h: 230;
@@ -289,16 +291,16 @@ body {
    ========================================================================== */
 
 /* Magenta */
-body.bs-magenta.theme-light { --bs-accent:#e11484; --bs-accent-hover:#c30e70; --bs-accent-text:#bd0a6b; --accent-h:327; --accent-s:84%; --accent-l:48%; }
-body.bs-magenta.theme-dark  { --bs-accent:#ff4d94; --bs-accent-hover:#ff6ba8; --bs-accent-text:#ff80b4; --accent-h:333; --accent-s:100%; --accent-l:65%; }
+body.bs-magenta.theme-light { --bs-accent:#e11484; --bs-accent-rgb:225, 20, 132; --bs-accent-hover:#c30e70; --bs-accent-text:#bd0a6b; --accent-h:327; --accent-s:84%; --accent-l:48%; }
+body.bs-magenta.theme-dark  { --bs-accent:#ff4d94; --bs-accent-rgb:255, 77, 148; --bs-accent-hover:#ff6ba8; --bs-accent-text:#ff80b4; --accent-h:333; --accent-s:100%; --accent-l:65%; }
 
 /* Tangerine */
-body.bs-tangerine.theme-light { --bs-accent:#ef5316; --bs-accent-hover:#d4430c; --bs-accent-text:#bf3d0b; --accent-h:18; --accent-s:88%; --accent-l:51%; }
-body.bs-tangerine.theme-dark  { --bs-accent:#ff7a45; --bs-accent-hover:#ff9163; --bs-accent-text:#ff9b72; --accent-h:18; --accent-s:100%; --accent-l:64%; }
+body.bs-tangerine.theme-light { --bs-accent:#ef5316; --bs-accent-rgb:239, 83, 22; --bs-accent-hover:#d4430c; --bs-accent-text:#bf3d0b; --accent-h:18; --accent-s:88%; --accent-l:51%; }
+body.bs-tangerine.theme-dark  { --bs-accent:#ff7a45; --bs-accent-rgb:255, 122, 69; --bs-accent-hover:#ff9163; --bs-accent-text:#ff9b72; --accent-h:18; --accent-s:100%; --accent-l:64%; }
 
 /* Ink (monochrome — let the black & white do the talking) */
-body.bs-ink.theme-light { --bs-accent:#16150f; --bs-accent-hover:#000000; --bs-accent-text:#16150f; --accent-h:48; --accent-s:18%; --accent-l:8%; }
-body.bs-ink.theme-dark  { --bs-accent:#eae8df; --bs-accent-hover:#ffffff; --bs-accent-text:#eae8df; --accent-h:48; --accent-s:18%; --accent-l:90%; --text-on-accent:#0b0b0d; }
+body.bs-ink.theme-light { --bs-accent:#16150f; --bs-accent-rgb:22, 21, 15; --bs-accent-hover:#000000; --bs-accent-text:#16150f; --accent-h:48; --accent-s:18%; --accent-l:8%; }
+body.bs-ink.theme-dark  { --bs-accent:#eae8df; --bs-accent-rgb:234, 232, 223; --bs-accent-hover:#ffffff; --bs-accent-text:#eae8df; --accent-h:48; --accent-s:18%; --accent-l:90%; --text-on-accent:#0b0b0d; }
 
 /* Route Obsidian's accent machinery through our token */
 body {
@@ -433,7 +435,8 @@ body {
 
 /* Disable masthead/H1 rules when requested */
 body.bs-no-masthead .inline-title,
-body.bs-no-masthead .markdown-rendered h1 {
+body.bs-no-masthead .markdown-rendered h1,
+body.bs-no-masthead .markdown-source-view.mod-cm6 .HyperMD-header-1 {
   border-bottom: none;
   box-shadow: none;
 }
@@ -586,7 +589,8 @@ body.bs-no-dropcaps .markdown-reading-view .markdown-preview-sizer > .el-p:first
 
 .callout {
   border: var(--bs-rule) solid var(--bs-rule-color);
-  border-left: var(--bs-rule-bold) solid var(--callout-color, var(--bs-accent));
+  border-left: var(--bs-rule-bold) solid var(--bs-accent);
+  border-left-color: rgb(var(--callout-color, var(--bs-accent-rgb)));
   border-radius: 0 var(--radius-m) var(--radius-m) 0;
   background: var(--background-primary-alt);
   mix-blend-mode: normal;
@@ -771,7 +775,8 @@ input[type="checkbox"] {
    17. STYLE-SETTINGS TOGGLES  (justify, small-caps off)
    ========================================================================== */
 
-body.bs-justify .markdown-rendered p {
+body.bs-justify .markdown-rendered p,
+body.bs-justify .markdown-source-view.mod-cm6 .cm-line {
   text-align: justify;
   hyphens: auto;
 }
@@ -779,7 +784,12 @@ body.bs-justify .markdown-rendered p {
 body.bs-no-smallcaps .markdown-rendered h4,
 body.bs-no-smallcaps .markdown-rendered h5,
 body.bs-no-smallcaps .markdown-rendered h6,
+body.bs-no-smallcaps .HyperMD-header-4,
+body.bs-no-smallcaps .HyperMD-header-5,
+body.bs-no-smallcaps .HyperMD-header-6,
 body.bs-no-smallcaps .markdown-rendered a.tag,
+body.bs-no-smallcaps .cm-hashtag,
+body.bs-no-smallcaps .callout-title,
 body.bs-no-smallcaps .metadata-property-key,
 body.bs-no-smallcaps .markdown-rendered th {
   text-transform: none;

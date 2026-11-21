@@ -156,7 +156,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="00"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="00"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--mint) var(--medium-contrast-amount),
@@ -164,7 +164,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="00"])
+  .nav-folder:has(> .nav-folder-title[data-path^="00"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -216,7 +216,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="01"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="01"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--cyan) var(--medium-contrast-amount),
@@ -224,7 +224,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="01"])
+  .nav-folder:has(> .nav-folder-title[data-path^="01"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -280,7 +280,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="02"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="02"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--light-blue) var(--medium-contrast-amount),
@@ -288,7 +288,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="02"])
+  .nav-folder:has(> .nav-folder-title[data-path^="02"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -340,7 +340,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="03"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="03"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--blue) var(--medium-contrast-amount),
@@ -348,7 +348,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="03"])
+  .nav-folder:has(> .nav-folder-title[data-path^="03"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -400,7 +400,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="04"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="04"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--violet) var(--medium-contrast-amount),
@@ -408,7 +408,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="04"])
+  .nav-folder:has(> .nav-folder-title[data-path^="04"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -460,7 +460,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="05"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="05"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--purple) var(--medium-contrast-amount),
@@ -468,7 +468,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="05"])
+  .nav-folder:has(> .nav-folder-title[data-path^="05"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -524,7 +524,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="06"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="06"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--magenta) var(--medium-contrast-amount),
@@ -532,7 +532,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="06"])
+  .nav-folder:has(> .nav-folder-title[data-path^="06"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -588,7 +588,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="07"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="07"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--hot-red) var(--medium-contrast-amount),
@@ -596,7 +596,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="07"])
+  .nav-folder:has(> .nav-folder-title[data-path^="07"])
   .nav-file-title {
   color: color-mix(
     in srgb,
@@ -652,7 +652,7 @@ these to suit your own folder structure and vault theme!
     var(--contrast-color)
   );
 }
-.tree-item-children .nav-folder:has(.nav-folder-title[data-path^="99"]) {
+.tree-item-children .nav-folder:has(> .nav-folder-title[data-path^="99"]) {
   --nav-indentation-guide-color: color-mix(
     in srgb,
     var(--cool-gray) var(--medium-contrast-amount),
@@ -660,7 +660,7 @@ these to suit your own folder structure and vault theme!
   );
 }
 .tree-item-children
-  .nav-folder:has(.nav-folder-title[data-path^="99"])
+  .nav-folder:has(> .nav-folder-title[data-path^="99"])
   .nav-file-title {
   color: color-mix(
     in srgb,
